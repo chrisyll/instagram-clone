@@ -1,19 +1,69 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isEmailValid, setIsEmailValid] = useState(true);
+
+  const handleInputChange = (
+    type: React.HTMLInputTypeAttribute,
+    value: string
+  ) => {
+    switch (type) {
+      case "email":
+        setEmail(value);
+        !isEmailValid && setIsEmailValid(validateEmail(value));
+        break;
+      case "password":
+        setPassword(value);
+        break;
+    }
+  };
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const onSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!validateEmail(email)) {
+      setIsEmailValid(false);
+      return;
+    }
+    console.log("FORM SUBMITTED");
+  };
+
   return (
     <Container>
       <ImageContainer>
-        <StyledImage src="/images/insta_on_iphone.jpg" alt="Iphone Photo" />
+        <StyledImage src="/images/insta_on_iphone.jpg" alt="Iphone photo" />
       </ImageContainer>
       <FormContainer>
-        <Form>
+        <Form onSubmit={onSubmitForm} noValidate>
           <FormContent>
             <LogoImage src="/images/insta_word_image.jpg" alt="Instagram" />
-            <Input type="email" placeholder="Email" />
-            <Input type="password" placeholder="Password" />
-            <LoginButton disabled={true}>Log in</LoginButton>
+            <Input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => handleInputChange(e.target.type, e.target.value)}
+              hasError={!isEmailValid}
+            />
+            <Input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => handleInputChange(e.target.type, e.target.value)}
+            />
+            <LoginButton
+              type="submit"
+              disabled={email.length === 0 || password.length === 0}
+            >
+              Log in
+            </LoginButton>
           </FormContent>
         </Form>
         <SignUpContainer>
@@ -81,17 +131,17 @@ const LogoImage = styled.img`
   object-fit: cover;
 `;
 
-const Input = styled.input`
+const Input = styled.input<{ hasError?: boolean }>`
   width: 100%;
   padding: 9px 10px;
-  border: 1px solid #dbdbdb;
+  border: 1px solid ${(props) => (props.hasError ? "red" : "#dbdbdb")};
   border-radius: 3px;
-  background-color: #fafafa;
+  background-color: ${(props) => (props.hasError ? "#fdd" : "#fafafa")};
   box-sizing: border-box;
   font-size: 14px;
 
   &:focus {
-    border-color: #a9a9a9;
+    border-color: ${(props) => (props.hasError ? "red" : "#a9a9a9")};
     outline: none;
   }
 `;

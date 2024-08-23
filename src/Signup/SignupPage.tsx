@@ -1,6 +1,11 @@
 import styled from "styled-components";
 
 function SignupPage() {
+  const validatePassword = (password: string) => {
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
   return (
     <FormContainer>
       <LogoImage src="/images/insta_word_image.jpg" alt="Instagram" />
