@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 function LoginPage() {
@@ -15,6 +16,14 @@ function LoginPage() {
             <LoginButton disabled={true}>Log in</LoginButton>
           </FormContent>
         </Form>
+        <SignUpContainer>
+          <SignUpText>
+            Don't have an account?
+            <Link to={"signup"}>
+              <SignUpButton>Sign up</SignUpButton>
+            </Link>
+          </SignUpText>
+        </SignUpContainer>
       </FormContainer>
     </Container>
   );
@@ -44,6 +53,9 @@ const StyledImage = styled.img`
 const FormContainer = styled.div`
   width: 320px;
   height: 580px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 `;
 
 const Form = styled.form`
@@ -54,6 +66,7 @@ const Form = styled.form`
   flex-direction: column;
   justify-content: center;
   height: 360px;
+  background-color: #fff;
 `;
 
 const FormContent = styled.div`
@@ -69,13 +82,16 @@ const LogoImage = styled.img`
 `;
 
 const Input = styled.input`
+  width: 100%;
+  padding: 9px 10px;
   border: 1px solid #dbdbdb;
-  padding: 8px;
+  border-radius: 3px;
+  background-color: #fafafa;
   box-sizing: border-box;
-  border-radius: 4px;
+  font-size: 14px;
 
   &:focus {
-    border-color: #a8a8a8;
+    border-color: #a9a9a9;
     outline: none;
   }
 `;
@@ -100,5 +116,34 @@ const LoginButton = styled.button`
   &:disabled {
     background-color: #b2dffc;
     cursor: default;
+  }
+`;
+
+const SignUpContainer = styled.div`
+  height: 60px;
+  border: 1px solid #dbdbdb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background-color: #fff;
+`;
+
+const SignUpText = styled.div`
+  color: #262626;
+`;
+
+const SignUpButton = styled.button`
+  background: none;
+  border: none;
+  color: #0095f6;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 5px;
+  font-size: 14px;
+
+  &:hover {
+    text-decoration: underline;
   }
 `;
