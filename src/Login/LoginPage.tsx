@@ -1,39 +1,27 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { validateEmail } from "../utils/validation";
 
 function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isEmailValid, setIsEmailValid] = useState(true);
+  const [formValues, setFormValues] = useState({ email: "", password: "" });
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
 
   const handleInputChange = (
     type: React.HTMLInputTypeAttribute,
     value: string
   ) => {
-    switch (type) {
-      case "email":
-        setEmail(value);
-        !isEmailValid && setIsEmailValid(validateEmail(value));
-        break;
-      case "password":
-        setPassword(value);
-        break;
-    }
-  };
+    setFormValues({ ...formValues, [type]: value });
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    if (type === "email") {
+      !emailTouched && setEmailTouched(true);
+      setIsEmailValid(validateEmail(value));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!validateEmail(email)) {
-      setIsEmailValid(false);
-      return;
-    }
-    console.log("FORM SUBMITTED");
   };
 
   return (
@@ -48,19 +36,19 @@ function LoginPage() {
             <Input
               type="email"
               placeholder="Email"
-              value={email}
+              value={formValues.email}
               onChange={(e) => handleInputChange(e.target.type, e.target.value)}
-              $hasError={!isEmailValid}
+              $hasError={!isEmailValid && emailTouched}
             />
             <Input
               type="password"
               placeholder="Password"
-              value={password}
+              value={formValues.password}
               onChange={(e) => handleInputChange(e.target.type, e.target.value)}
             />
             <LoginButton
               type="submit"
-              disabled={email.length === 0 || password.length === 0}
+              disabled={!isEmailValid || formValues.password.length === 0}
             >
               Log in
             </LoginButton>

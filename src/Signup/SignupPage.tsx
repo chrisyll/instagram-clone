@@ -1,6 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import {
+  validateEmail,
+  validateName,
+  validateUsername,
+  validatePassword,
+} from "../utils/validation";
+
+const errorMessages = {
+  email: "Please enter a valid email address.",
+  name: "Full name must contain at least two words with at least two letters each.",
+  username:
+    "Username must be 3-20 characters long and cannot start or end with a period or underscore.",
+  password:
+    "Password must be at least 8 characters long, contain at least one uppercase letter and one number.",
+};
+
+type FieldName = "email" | "name" | "username" | "password";
 
 function SignupPage() {
   const navigate = useNavigate();
@@ -12,14 +29,24 @@ function SignupPage() {
   });
 
   const [formValuesValidation, setFormValuesValidation] = useState({
-    isEmailValid: true,
-    isNameValid: true,
-    isUsernameValid: true,
-    isPasswordValid: true,
+    isEmailValid: false,
+    isNameValid: false,
+    isUsernameValid: false,
+    isPasswordValid: false,
   });
 
-  const handleInputChange = (name: string, value: string) => {
+  const [fieldsTouched, setFieldsTouched] = useState({
+    email: false,
+    name: false,
+    username: false,
+    password: false,
+  });
+
+  const handleInputChange = (name: FieldName, value: string) => {
     setFormValues({ ...formValues, [name]: value });
+    if (!fieldsTouched[name]) {
+      setFieldsTouched({ ...fieldsTouched, [name]: true });
+    }
 
     switch (name) {
       case "email":
@@ -53,61 +80,9 @@ function SignupPage() {
     }
   };
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const validateName = (name: string) => {
-    const nameParts = name.trim().split(/\s+/);
-
-    if (nameParts.length >= 2 && nameParts.every((part) => part.length >= 2)) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  const validateUsername = (username: string) => {
-    const usernameRegex = /^(?![_\.])[a-zA-Z0-9._]{3,20}(?<![_.])$/;
-
-    return usernameRegex.test(username);
-  };
-
-  const validatePassword = (password: string) => {
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    return passwordRegex.test(password);
-  };
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let isEmailValid = true;
-    let isNameValid = true;
-    let isUsernameValid = true;
-    let isPasswordValid = true;
-
-    if (!validateEmail(formValues.email)) {
-      isEmailValid = false;
-    }
-    if (!validateName(formValues.name)) {
-      isNameValid = false;
-    }
-    if (!validateUsername(formValues.username)) {
-      isUsernameValid = false;
-    }
-    if (!validatePassword(formValues.password)) {
-      isPasswordValid = false;
-    }
-
-    setFormValuesValidation({
-      isEmailValid: isEmailValid,
-      isNameValid: isNameValid,
-      isUsernameValid: isUsernameValid,
-      isPasswordValid: isPasswordValid,
-    });
-    if (isEmailValid && isNameValid && isUsernameValid && isPasswordValid) {
-      navigate("/");
-    }
+    navigate("/");
   };
 
   return (
@@ -116,73 +91,78 @@ function SignupPage() {
       <InfoText>Sign up to see photos and videos from your friends.</InfoText>
       <StyledForm onSubmit={handleSubmit} noValidate>
         <FormField>
-          {!formValuesValidation.isEmailValid && (
-            <ErrorMessage>Email adress not valid</ErrorMessage>
+          {!formValuesValidation.isEmailValid && fieldsTouched.email && (
+            <ErrorMessage>{errorMessages.email}</ErrorMessage>
           )}
           <Input
             type="email"
             name="email"
             placeholder="Email"
             value={formValues.email}
-            onChange={(e) => handleInputChange(e.target.name, e.target.value)}
-            $hasError={!formValuesValidation.isEmailValid}
+            onChange={(e) =>
+              handleInputChange(e.target.name as FieldName, e.target.value)
+            }
+            $hasError={
+              !formValuesValidation.isEmailValid && fieldsTouched.email
+            }
           />
         </FormField>
         <FormField>
-          {!formValuesValidation.isNameValid && (
-            <ErrorMessage>
-              Full name must contain at least two words with at least two
-              letters each.
-            </ErrorMessage>
+          {!formValuesValidation.isNameValid && fieldsTouched.name && (
+            <ErrorMessage>{errorMessages.name}</ErrorMessage>
           )}
           <Input
             type="text"
             name="name"
             placeholder="Full name"
             value={formValues.name}
-            onChange={(e) => handleInputChange(e.target.name, e.target.value)}
-            $hasError={!formValuesValidation.isNameValid}
+            onChange={(e) =>
+              handleInputChange(e.target.name as FieldName, e.target.value)
+            }
+            $hasError={!formValuesValidation.isNameValid && fieldsTouched.name}
           />
         </FormField>
         <FormField>
-          {!formValuesValidation.isUsernameValid && (
-            <ErrorMessage>
-              Username must be 3-20 characters long and cannot start or end with
-              a period or underscore.
-            </ErrorMessage>
+          {!formValuesValidation.isUsernameValid && fieldsTouched.username && (
+            <ErrorMessage>{errorMessages.username}</ErrorMessage>
           )}
           <Input
             type="text"
             name="username"
             placeholder="Username"
             value={formValues.username}
-            onChange={(e) => handleInputChange(e.target.name, e.target.value)}
-            $hasError={!formValuesValidation.isUsernameValid}
+            onChange={(e) =>
+              handleInputChange(e.target.name as FieldName, e.target.value)
+            }
+            $hasError={
+              !formValuesValidation.isUsernameValid && fieldsTouched.username
+            }
           />
         </FormField>
         <FormField>
-          {!formValuesValidation.isPasswordValid && (
-            <ErrorMessage>
-              Password must be at least 8 characters long, contain at least one
-              uppercase letter and one number.
-            </ErrorMessage>
+          {!formValuesValidation.isPasswordValid && fieldsTouched.password && (
+            <ErrorMessage>{errorMessages.password}</ErrorMessage>
           )}
           <Input
             type="password"
             name="password"
             placeholder="Password"
             value={formValues.password}
-            onChange={(e) => handleInputChange(e.target.name, e.target.value)}
-            $hasError={!formValuesValidation.isPasswordValid}
+            onChange={(e) =>
+              handleInputChange(e.target.name as FieldName, e.target.value)
+            }
+            $hasError={
+              !formValuesValidation.isPasswordValid && fieldsTouched.password
+            }
           />
         </FormField>
         <SignupButton
           type="submit"
           disabled={
-            formValues.email.length === 0 ||
-            formValues.password.length === 0 ||
-            formValues.name.length === 0 ||
-            formValues.username.length === 0
+            !formValuesValidation.isEmailValid ||
+            !formValuesValidation.isNameValid ||
+            !formValuesValidation.isUsernameValid ||
+            !formValuesValidation.isPasswordValid
           }
         >
           Sign up
