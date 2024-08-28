@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { validateEmail } from "../utils/validation";
+import { handleLogin } from "../../firebase.config";
 
 function LoginPage() {
   const [formValues, setFormValues] = useState({ email: "", password: "" });
@@ -20,8 +21,13 @@ function LoginPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onsubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    try {
+      const result = await handleLogin(formValues.email, formValues.password);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -30,7 +36,7 @@ function LoginPage() {
         <StyledImage src="/images/insta_on_iphone.jpg" alt="Iphone photo" />
       </ImageContainer>
       <FormContainer>
-        <Form onSubmit={handleSubmit} noValidate>
+        <Form onSubmit={onsubmit} noValidate>
           <FormContent>
             <LogoImage src="/images/insta_word_image.jpg" alt="Instagram" />
             <Input

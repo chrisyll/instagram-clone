@@ -7,15 +7,8 @@ import {
   validateUsername,
   validatePassword,
 } from "../utils/validation";
-
-const errorMessages = {
-  email: "Please enter a valid email address.",
-  name: "Full name must contain at least two words with at least two letters each.",
-  username:
-    "Username must be 3-20 characters long and cannot start or end with a period or underscore.",
-  password:
-    "Password must be at least 8 characters long, contain at least one uppercase letter and one number.",
-};
+import { handleSignup } from "../../firebase.config";
+import errorMessages from "./SignupFormErrorMessages.json";
 
 type FieldName = "email" | "name" | "username" | "password";
 
@@ -80,15 +73,25 @@ function SignupPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    navigate("/");
+    try {
+      const result = await handleSignup(
+        formValues.email,
+        formValues.password,
+        formValues.name,
+        formValues.username
+      );
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <Container>
       <FormContainer>
-        <StyledForm onSubmit={handleSubmit} noValidate>
+        <StyledForm onSubmit={onSubmit} noValidate>
           <LogoImage src="/images/insta_word_image.jpg" alt="Instagram" />
           <InfoText>
             Sign up to see photos and videos from your friends.
