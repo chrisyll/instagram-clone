@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import {
   validateEmail,
@@ -86,105 +86,125 @@ function SignupPage() {
   };
 
   return (
-    <FormContainer>
-      <LogoImage src="/images/insta_word_image.jpg" alt="Instagram" />
-      <InfoText>Sign up to see photos and videos from your friends.</InfoText>
-      <StyledForm onSubmit={handleSubmit} noValidate>
-        <FormField>
-          {!formValuesValidation.isEmailValid && fieldsTouched.email && (
-            <ErrorMessage>{errorMessages.email}</ErrorMessage>
-          )}
-          <Input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formValues.email}
-            onChange={(e) =>
-              handleInputChange(e.target.name as FieldName, e.target.value)
+    <Container>
+      <FormContainer>
+        <StyledForm onSubmit={handleSubmit} noValidate>
+          <LogoImage src="/images/insta_word_image.jpg" alt="Instagram" />
+          <InfoText>
+            Sign up to see photos and videos from your friends.
+          </InfoText>
+          <FormField>
+            {!formValuesValidation.isEmailValid && fieldsTouched.email && (
+              <ErrorMessage>{errorMessages.email}</ErrorMessage>
+            )}
+            <Input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formValues.email}
+              onChange={(e) =>
+                handleInputChange(e.target.name as FieldName, e.target.value)
+              }
+              $hasError={
+                !formValuesValidation.isEmailValid && fieldsTouched.email
+              }
+            />
+          </FormField>
+          <FormField>
+            {!formValuesValidation.isNameValid && fieldsTouched.name && (
+              <ErrorMessage>{errorMessages.name}</ErrorMessage>
+            )}
+            <Input
+              type="text"
+              name="name"
+              placeholder="Full name"
+              value={formValues.name}
+              onChange={(e) =>
+                handleInputChange(e.target.name as FieldName, e.target.value)
+              }
+              $hasError={
+                !formValuesValidation.isNameValid && fieldsTouched.name
+              }
+            />
+          </FormField>
+          <FormField>
+            {!formValuesValidation.isUsernameValid &&
+              fieldsTouched.username && (
+                <ErrorMessage>{errorMessages.username}</ErrorMessage>
+              )}
+            <Input
+              type="text"
+              name="username"
+              placeholder="Username"
+              value={formValues.username}
+              onChange={(e) =>
+                handleInputChange(e.target.name as FieldName, e.target.value)
+              }
+              $hasError={
+                !formValuesValidation.isUsernameValid && fieldsTouched.username
+              }
+            />
+          </FormField>
+          <FormField>
+            {!formValuesValidation.isPasswordValid &&
+              fieldsTouched.password && (
+                <ErrorMessage>{errorMessages.password}</ErrorMessage>
+              )}
+            <Input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formValues.password}
+              onChange={(e) =>
+                handleInputChange(e.target.name as FieldName, e.target.value)
+              }
+              $hasError={
+                !formValuesValidation.isPasswordValid && fieldsTouched.password
+              }
+            />
+          </FormField>
+          <SignupButton
+            type="submit"
+            disabled={
+              !formValuesValidation.isEmailValid ||
+              !formValuesValidation.isNameValid ||
+              !formValuesValidation.isUsernameValid ||
+              !formValuesValidation.isPasswordValid
             }
-            $hasError={
-              !formValuesValidation.isEmailValid && fieldsTouched.email
-            }
-          />
-        </FormField>
-        <FormField>
-          {!formValuesValidation.isNameValid && fieldsTouched.name && (
-            <ErrorMessage>{errorMessages.name}</ErrorMessage>
-          )}
-          <Input
-            type="text"
-            name="name"
-            placeholder="Full name"
-            value={formValues.name}
-            onChange={(e) =>
-              handleInputChange(e.target.name as FieldName, e.target.value)
-            }
-            $hasError={!formValuesValidation.isNameValid && fieldsTouched.name}
-          />
-        </FormField>
-        <FormField>
-          {!formValuesValidation.isUsernameValid && fieldsTouched.username && (
-            <ErrorMessage>{errorMessages.username}</ErrorMessage>
-          )}
-          <Input
-            type="text"
-            name="username"
-            placeholder="Username"
-            value={formValues.username}
-            onChange={(e) =>
-              handleInputChange(e.target.name as FieldName, e.target.value)
-            }
-            $hasError={
-              !formValuesValidation.isUsernameValid && fieldsTouched.username
-            }
-          />
-        </FormField>
-        <FormField>
-          {!formValuesValidation.isPasswordValid && fieldsTouched.password && (
-            <ErrorMessage>{errorMessages.password}</ErrorMessage>
-          )}
-          <Input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formValues.password}
-            onChange={(e) =>
-              handleInputChange(e.target.name as FieldName, e.target.value)
-            }
-            $hasError={
-              !formValuesValidation.isPasswordValid && fieldsTouched.password
-            }
-          />
-        </FormField>
-        <SignupButton
-          type="submit"
-          disabled={
-            !formValuesValidation.isEmailValid ||
-            !formValuesValidation.isNameValid ||
-            !formValuesValidation.isUsernameValid ||
-            !formValuesValidation.isPasswordValid
-          }
-        >
-          Sign up
-        </SignupButton>
-      </StyledForm>
-    </FormContainer>
+          >
+            Sign up
+          </SignupButton>
+        </StyledForm>
+        <LoginContainer>
+          <LoginText>
+            Have an account?
+            <Link to={"/"}>
+              <LoginButton>Log in</LoginButton>
+            </Link>
+          </LoginText>
+        </LoginContainer>
+      </FormContainer>
+    </Container>
   );
 }
 
 export { SignupPage };
 
+const Container = styled.div`
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+`;
+
 const FormContainer = styled.div`
+  width: 320px;
+  height: 580px;
   display: flex;
   flex-direction: column;
-  max-width: 350px;
-  width: 100%;
+  gap: 12px;
   padding: 40px;
-  box-sizing: border-box;
-  margin: 40px auto;
-  background-color: #fff;
-  border: 1px solid #dbdbdb;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 `;
 
 const LogoImage = styled.img`
@@ -204,6 +224,9 @@ const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
   gap: 12px;
+  background-color: #fff;
+  border: 1px solid #dbdbdb;
+  padding: 16px;
 `;
 
 const FormField = styled.div``;
@@ -249,5 +272,34 @@ const SignupButton = styled.button`
   &:disabled {
     background-color: #b2dffc;
     cursor: default;
+  }
+`;
+
+const LoginContainer = styled.div`
+  height: 60px;
+  border: 1px solid #dbdbdb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background-color: #fff;
+`;
+
+const LoginText = styled.div`
+  color: #262626;
+`;
+
+const LoginButton = styled.button`
+  background: none;
+  border: none;
+  color: #0095f6;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 5px;
+  font-size: 14px;
+
+  &:hover {
+    text-decoration: underline;
   }
 `;
