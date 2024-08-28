@@ -7,14 +7,13 @@ import {
 import { getDatabase, ref, set } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCmr-1tBKfKAgz2XVyarN0hvMShO9-zITU",
-  authDomain: "instaclone-43fee.firebaseapp.com",
-  databaseURL:
-    "https://instaclone-43fee-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "instaclone-43fee",
-  storageBucket: "instaclone-43fee.appspot.com",
-  messagingSenderId: "277019141116",
-  appId: "1:277019141116:web:d9b32d00e00c1f329e0879",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);

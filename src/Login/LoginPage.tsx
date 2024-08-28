@@ -25,6 +25,7 @@ function LoginPage() {
     e.preventDefault();
     try {
       const result = await handleLogin(formValues.email, formValues.password);
+      console.log(result);
     } catch (error) {
       console.log(error);
     }
