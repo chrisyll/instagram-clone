@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { validateEmail } from "../utils/validation";
 import { handleLogin } from "../../firebase.config";
+import { useDispatch } from "react-redux";
+import { login } from "../store/accountSlice";
 
 function LoginPage() {
   const [formValues, setFormValues] = useState({ email: "", password: "" });
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleInputChange = (
     type: React.HTMLInputTypeAttribute,
@@ -24,8 +28,9 @@ function LoginPage() {
   const onsubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const result = await handleLogin(formValues.email, formValues.password);
-      console.log(result);
+      const result = await handleLogin({ ...formValues });
+      dispatch(login(result));
+      navigate("/feed");
     } catch (error) {
       console.log(error);
     }

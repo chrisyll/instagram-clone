@@ -4,7 +4,20 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { getDatabase, ref, set } from "firebase/database";
+import { get, getDatabase, ref, set } from "firebase/database";
+import { LoginPayload } from "./src/store/accountSlice";
+
+type SignupCredentials = {
+  email: string;
+  password: string;
+  name: string;
+  username: string;
+};
+
+type LoginCredentials = {
+  email: string;
+  password: string;
+};
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -20,12 +33,12 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
-const handleSignup = async (
-  email: string,
-  password: string,
-  name: string,
-  username: string
-) => {
+const handleSignup = async ({
+  email,
+  password,
+  name,
+  username,
+}: SignupCredentials): Promise<LoginPayload> => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
@@ -40,13 +53,23 @@ const handleSignup = async (
       email: user.email,
     });
 
-    return user;
+    return {
+      uid: user.uid,
+      email: email,
+      username: username,
+      name: name,
+      accessToken: await user.getIdToken(),
+      refreshToken: user.refreshToken,
+    };
   } catch (error) {
     throw error;
   }
 };
 
-const handleLogin = async (email: string, password: string) => {
+const handleLogin = async ({
+  email,
+  password,
+}: LoginCredentials): Promise<LoginPayload> => {
   try {
     const userCredential = await signInWithEmailAndPassword(
       auth,
@@ -54,7 +77,19 @@ const handleLogin = async (email: string, password: string) => {
       password
     );
     const user = userCredential.user;
-    return user;
+    const snapshot = await get(ref(database, "users/" + user.uid));
+
+    if (snapshot.exists()) {
+      return {
+        uid: user.uid,
+        email: snapshot.val().email,
+        username: snapshot.val().username,
+        name: snapshot.val().name,
+        accessToken: await user.getIdToken(),
+        refreshToken: user.refreshToken,
+      };
+    }
+    throw new Error("User data does not exist in the database.");
   } catch (error) {
     throw error;
   }

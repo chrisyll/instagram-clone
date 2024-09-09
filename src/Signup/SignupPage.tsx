@@ -9,11 +9,12 @@ import {
 } from "../utils/validation";
 import { handleSignup } from "../../firebase.config";
 import errorMessages from "./SignupFormErrorMessages.json";
+import { useDispatch } from "react-redux";
+import { login } from "../store/accountSlice";
 
 type FieldName = "email" | "name" | "username" | "password";
 
 function SignupPage() {
-  const navigate = useNavigate();
   const [formValues, setFormValues] = useState({
     email: "",
     name: "",
@@ -34,6 +35,8 @@ function SignupPage() {
     username: false,
     password: false,
   });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleInputChange = (name: FieldName, value: string) => {
     setFormValues({ ...formValues, [name]: value });
@@ -76,13 +79,9 @@ function SignupPage() {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const result = await handleSignup(
-        formValues.email,
-        formValues.password,
-        formValues.name,
-        formValues.username
-      );
-      navigate("/");
+      const result = await handleSignup({ ...formValues });
+      dispatch(login(result));
+      navigate("/feed");
     } catch (error) {
       console.log(error);
     }
